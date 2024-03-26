@@ -1,3 +1,8 @@
+<?php
+/**
+ * @var string|null $errorMessage
+ */
+?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -16,7 +21,7 @@
         </div>
         <div class="form-field">
             <label for="cat-form-image">Кошачье фото</label>
-            <input name="image" type="file" id="cat-form-image" required maxlength="100"/>
+            <input name="image" type="file" id="cat-form-image" required maxlength="100" accept="image/webp,image/jpeg"/>
         </div>
         <div class="form-field">
             <label for="cat-form-description">Описание</label>
@@ -26,8 +31,11 @@
             <label for="cat-form-author-name">Ваше имя</label>
             <input type="text" name="author_name" id="cat-form-author-name" required maxlength="100"/>
         </div>
-        <div class="form-field">
-        </div>
+        <?php if ($errorMessage): ?>
+            <div class="form-field form-field-full-width">
+                <p class="form-error"><?= $errorMessage ?></p>
+            </div>
+        <?php endif; ?>
         <div class="form-field form-field-full-width">
             <button type="submit">Отправить</button>
         </div>

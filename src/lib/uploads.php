@@ -10,8 +10,12 @@ require_once __DIR__ . '/paths.php';
  */
 function uploadImageFile(array $fileInfo): array
 {
+    $imageName = $fileInfo['name'];
+    validateImageUploadError($imageName, $fileInfo['error']);
+    validateImageUploadBytesSize($imageName, $fileInfo['size']);
+
     $imageInfo = getImageFileInfo($fileInfo);
-    validateImageUpload($fileInfo, $imageInfo);
+    validateImageUploadMimeType($imageName, $imageInfo['mime_type']);
 
     $uploadAbsolutePath = moveFileToUploadsDir($fileInfo['tmp_name'], 'img');
     $imageInfo['path'] = getUploadRelativePath($uploadAbsolutePath);
@@ -67,19 +71,6 @@ function getImageFileInfo(array $fileInfo): array
         'width' => $imageSizeInfo[0],
         'height' => $imageSizeInfo[1],
     ];
-}
-
-/**
- * @param array{name:string,tmp_name:string,error:int,size:int} $fileInfo
- * @param array{width:int,height:int,mime_type:string} $imageInfo
- * @return void
- */
-function validateImageUpload(array $fileInfo, array $imageInfo): void
-{
-    $imageName = $fileInfo['name'];
-    validateImageUploadError($imageName, $fileInfo['error']);
-    validateImageUploadBytesSize($imageName, $fileInfo['size']);
-    validateImageUploadMimeType($imageName, $imageInfo['mime_type']);
 }
 
 /**

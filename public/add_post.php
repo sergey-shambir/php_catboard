@@ -10,9 +10,11 @@ require_once __DIR__ . '/../src/lib/views.php';
 const SHOW_POST_URL = '/show_post.php';
 const POST_ID_PARAM = 'post_id';
 
-function showAddPostForm(): void
+function showAddPostForm(?string $errorMessage = null): void
 {
-    echo renderView('add_post_form.php');
+    echo renderView('add_post_form.php', [
+        'errorMessage' => $errorMessage
+    ]);
 }
 
 function handleAddPostForm(): void
@@ -23,12 +25,22 @@ function handleAddPostForm(): void
     $authorName = $_POST['author_name'] ?? null;
     if (!$fileInfo || !$description || !$authorName)
     {
-        writeErrorBadRequest();
+        showAddPostForm(errorMessage: 'Все поля обязательны для заполнения');
+        http_response_code(HTTP_STATUS_400_BAD_REQUEST);
         return;
     }
 
     // Загрузка изображения в каталог uploads/
-    $imageInfo = uploadImageFile($fileInfo);
+    try
+    {
+        $imageInfo = uploadImageFile($fileInfo);
+    }
+    catch (InvalidArgumentException $exception)
+    {
+        showAddPostForm(errorMessage: $exception->getMessage());
+        http_response_code(HTTP_STATUS_400_BAD_REQUEST);
+        return;
+    }
 
     // Сохранение параметров изображения в базу данных
     $connection = connectDatabase();
