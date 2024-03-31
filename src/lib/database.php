@@ -99,7 +99,6 @@ function savePostToDatabase(PDO $connection, array $postData): int
  *     image_id:string,
  *     author_name:string,
  *     created_at:string,
- *     rating:int
  * }|null
  */
 function findPostInDatabase(PDO $connection, int $id): ?array
@@ -110,8 +109,7 @@ function findPostInDatabase(PDO $connection, int $id): ?array
             image_id,
             description,
             author_name,
-            created_at,
-            rating
+            created_at
         FROM post
         WHERE id = $id
         SQL;
@@ -132,8 +130,7 @@ function findPostInDatabase(PDO $connection, int $id): ?array
  *      description:string,
  *      image_id:string,
  *      author_name:string,
- *      created_at:string,
- *      rating:int
+ *      created_at:string
  *  }[]
  */
 function getRecentPostsFromDatabase(PDO $connection, int $limit): array
@@ -145,8 +142,7 @@ function getRecentPostsFromDatabase(PDO $connection, int $limit): array
             image_id,
             description,
             author_name,
-            created_at,
-            rating
+            created_at
         FROM post
         ORDER BY id DESC
         LIMIT $limit

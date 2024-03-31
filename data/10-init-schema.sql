@@ -16,7 +16,6 @@ CREATE TABLE post (
   description VARCHAR(300) NOT NULL,
   author_name VARCHAR(100) NOT NULL,
   created_at DATETIME NOT NULL DEFAULT NOW(),
-  rating INT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (id),
   CONSTRAINT post_image_id_fk
     FOREIGN KEY (image_id)
