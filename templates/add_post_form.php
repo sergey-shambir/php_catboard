@@ -21,11 +21,12 @@
         </div>
         <div class="form-field">
             <label for="cat-form-image">Кошачье фото</label>
-            <input name="image" type="file" id="cat-form-image" required maxlength="100" accept="image/webp,image/jpeg"/>
+            <input name="image" type="file" id="cat-form-image" required
+                   accept="image/webp,image/jpeg"/>
         </div>
         <div class="form-field">
             <label for="cat-form-description">Описание</label>
-            <textarea name="description" id="cat-form-description" required maxlength="100"></textarea>
+            <textarea name="description" id="cat-form-description" required maxlength="300"></textarea>
         </div>
         <div class="form-field">
             <label for="cat-form-author-name">Ваше имя</label>
