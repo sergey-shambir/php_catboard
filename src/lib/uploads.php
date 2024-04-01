@@ -15,17 +15,17 @@ function uploadImageFile(array $fileInfo): array
     validateImageUploadBytesSize($imageName, $fileInfo['size']);
 
     $imageInfo = getImageFileInfo($fileInfo);
-    validateImageUploadMimeType($imageName, $imageInfo['mime_type']);
+    $fileExtension = getImageFileExtension($imageName, $imageInfo['mime_type']);
 
-    $uploadAbsolutePath = moveFileToUploadsDir($fileInfo['tmp_name'], 'img');
+    $uploadAbsolutePath = moveFileToUploadsDir($fileInfo['tmp_name'], 'img', $fileExtension);
     $imageInfo['path'] = getUploadRelativePath($uploadAbsolutePath);
 
     return $imageInfo;
 }
 
-function moveFileToUploadsDir(string $fileTempPath, string $namePrefix): string
+function moveFileToUploadsDir(string $fileTempPath, string $namePrefix, string $extension): string
 {
-    $uploadPath = generateNewUploadPath($namePrefix);
+    $uploadPath = generateNewUploadPath($namePrefix, $extension);
     if (!move_uploaded_file($fileTempPath, $uploadPath))
     {
         throw new RuntimeException("Failed to move file '$fileTempPath' to the uploads directory");
@@ -34,11 +34,24 @@ function moveFileToUploadsDir(string $fileTempPath, string $namePrefix): string
     return $uploadPath;
 }
 
-function generateNewUploadPath(string $prefix): string
+/**
+ * @throws InvalidArgumentException
+ */
+function getImageFileExtension(string $imageName, string $mimeType): string
+{
+    return match ($mimeType)
+    {
+        'image/jpeg' => '.jpg',
+        'image/webp' => '.webp',
+        default => throw new InvalidArgumentException("Изображение '$imageName' имеет недопустимый тип '$mimeType' . Разрешены только JPEG и WEBP . ")
+    };
+}
+
+function generateNewUploadPath(string $prefix, string $extension): string
 {
     for ($attempt = 0; $attempt < 5; ++$attempt)
     {
-        $fileName = uniqid($prefix, true);
+        $fileName = uniqid($prefix, true) . $extension;
         $filePath = getUploadAbsolutePath($fileName);
         if (!file_exists($filePath))
         {
@@ -103,16 +116,5 @@ function validateImageUploadBytesSize(string $imageName, int $byteCount): void
     if ($byteCount > $maxByteCount)
     {
         throw new InvalidArgumentException("Файл изображения '$imageName' слишком большой . Размер не должен превышать $maxByteCountStr . ");
-    }
-}
-
-/**
- * @throws InvalidArgumentException
- */
-function validateImageUploadMimeType(string $imageName, string $mimeType): void
-{
-    if (!in_array($mimeType, ['image/jpeg', 'image/webp']))
-    {
-        throw new InvalidArgumentException("Изображение '$imageName' имеет недопустимый тип '$mimeType' . Разрешены только JPEG и WEBP . ");
     }
 }
