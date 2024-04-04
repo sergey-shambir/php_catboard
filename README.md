@@ -27,7 +27,7 @@ php -S localhost:8080 -t public
 
 ```
 
-После запуска откройте в браузере: http://localhost:8000
+После запуска откройте в браузере: http://localhost:8080
 
 ## Запуск на Linux с помощью docker-compose
 
